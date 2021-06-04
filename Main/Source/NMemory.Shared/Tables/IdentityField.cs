@@ -53,7 +53,7 @@ namespace NMemory.Tables
             this.identityGetter = this.identitySpecification.IdentityColumn.Compile();
         }
 
-        internal void InitializeBasedOnData(IEnumerable<TEntity> initialEntities)
+        internal void InitializeBasedOnData(IEnumerable<TEntity> initialEntities, bool forceMinValue = false)
         {
             long? currentNextIdentity = null;
 
@@ -71,7 +71,8 @@ namespace NMemory.Tables
 
             if (currentNextIdentity.HasValue)
             {
-                this.nextIdentity = currentNextIdentity.Value + this.identitySpecification.Increment;
+	            var nextValue = currentNextIdentity.Value + this.identitySpecification.Increment;
+                this.nextIdentity = nextValue > 0 ? nextValue : forceMinValue ? 1 : nextValue;
             }
         }
 
